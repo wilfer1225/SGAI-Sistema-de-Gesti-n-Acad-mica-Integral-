@@ -13,15 +13,19 @@ class ApiService {
 
   void setToken(String token) => _token = token;
 
-  Map<String, String> get _headers => {
-        'Content-Type': 'application/json',
-        if (_token != null) 'Authorization': 'Bearer $_token',
-      };
+  Map<String, String> get _headers {
+    final h = <String, String>{'Content-Type': 'application/json'};
+    if (_token != null) {
+      // construir dinámicamente para evitar interpolaciones literales
+      h['Authorization'] = 'Bearer ' + _token!;
+    }
+    return h;
+  }
 
   Future<Map<String, dynamic>> login(String email) async {
     final res = await http.post(
       Uri.parse('$baseUrl/api/auth/login'),
-      headers: _headers,
+      headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email}),
     );
     if (res.statusCode != 200) {
@@ -48,5 +52,17 @@ class ApiService {
     }
     if (res.statusCode != 201) throw Exception('Error al inscribirse');
     return body;
+  }
+
+  Future<Map<String, dynamic>> getAnalitico(int legajo) async {
+    final res = await http.get(Uri.parse('$baseUrl/api/analitico/$legajo'), headers: _headers);
+    if (res.statusCode != 200) throw Exception('Error al obtener analítico');
+    return jsonDecode(res.body) as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> getAsistencias(int legajo) async {
+    final res = await http.get(Uri.parse('$baseUrl/api/asistencias/$legajo'), headers: _headers);
+    if (res.statusCode != 200) throw Exception('Error al obtener asistencias');
+    return jsonDecode(res.body) as Map<String, dynamic>;
   }
 }
