@@ -16,56 +16,12 @@ class ApiService {
   Map<String, String> get _headers {
     final h = <String, String>{'Content-Type': 'application/json'};
     if (_token != null) {
-      // construir dinámicamente para evitar interpolaciones literales
       h['Authorization'] = 'Bearer ' + _token!;
     }
     return h;
   }
 
-  Future<Map<String, dynamic>> login(String email, String password) async {
-    final res = await http.post(
-      Uri.parse('$baseUrl/api/auth/login'),
-<<<<<<< HEAD
-      headers: _headers,
-      body: jsonEncode({'email': email, 'password': password}),
-=======
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email}),
->>>>>>> 0e83a652029a0aaf2432beb1b372c07b6ea0bdbb
-    );
-    if (res.statusCode != 200) {
-      throw Exception('Credenciales inválidas');
-    }
-    return jsonDecode(res.body) as Map<String, dynamic>;
-  }
-
-  Future<List<dynamic>> getMaterias() async {
-    final res =
-        await http.get(Uri.parse('$baseUrl/api/materias'), headers: _headers);
-    if (res.statusCode != 200) throw Exception('Error al obtener materias');
-    return jsonDecode(res.body) as List<dynamic>;
-  }
-
-  Future<Map<String, dynamic>> inscribirse(
-      int legajo, int idMateria, String tipoInstancia) async {
-    final res = await http.post(
-      Uri.parse('$baseUrl/api/inscripcion'),
-      headers: _headers,
-      body: jsonEncode({
-        'legajo': legajo,
-        'idMateria': idMateria,
-        'tipoInstancia': tipoInstancia
-      }),
-    );
-    final body = jsonDecode(res.body) as Map<String, dynamic>;
-    if (res.statusCode == 403) {
-      throw Exception('No cumple correlativas: ${body['faltantes']}');
-    }
-    if (res.statusCode != 201) throw Exception('Error al inscribirse');
-    return body;
-  }
-
-<<<<<<< HEAD
+  // ----- MÉTODOS GENÉRICOS (versión HEAD) -----
   Future<T> getJson<T>(String path) async {
     final response = await http.get(
       Uri.parse('$baseUrl/api$path'),
@@ -73,9 +29,7 @@ class ApiService {
     );
 
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw Exception(
-        'Error al obtener los datos',
-      );
+      throw Exception('Error al obtener los datos');
     }
 
     return jsonDecode(response.body) as T;
@@ -110,17 +64,62 @@ class ApiService {
     }
 
     return body;
-=======
+  }
+
+  // ----- MÉTODOS ESPECÍFICOS PARA ANALÍTICO Y ASISTENCIAS (versión entrante) -----
   Future<Map<String, dynamic>> getAnalitico(int legajo) async {
-    final res = await http.get(Uri.parse('$baseUrl/api/analitico/$legajo'), headers: _headers);
+    final res = await http.get(
+        Uri.parse('$baseUrl/api/alumnos/$legajo/analitico'),
+        headers: _headers);
     if (res.statusCode != 200) throw Exception('Error al obtener analítico');
     return jsonDecode(res.body) as Map<String, dynamic>;
   }
 
   Future<Map<String, dynamic>> getAsistencias(int legajo) async {
-    final res = await http.get(Uri.parse('$baseUrl/api/asistencias/$legajo'), headers: _headers);
+    final res = await http.get(
+        Uri.parse('$baseUrl/api/alumnos/$legajo/asistencias'),
+        headers: _headers);
     if (res.statusCode != 200) throw Exception('Error al obtener asistencias');
     return jsonDecode(res.body) as Map<String, dynamic>;
->>>>>>> 0e83a652029a0aaf2432beb1b372c07b6ea0bdbb
+  }
+
+  // ----- MÉTODO LOGIN (version HEAD, pero corregido) -----
+  Future<Map<String, dynamic>> login(String email, String password) async {
+    final res = await http.post(
+      Uri.parse('$baseUrl/api/auth/login'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email, 'password': password}),
+    );
+    if (res.statusCode != 200) {
+      throw Exception('Credenciales inválidas');
+    }
+    return jsonDecode(res.body) as Map<String, dynamic>;
+  }
+
+  // ----- OTROS MÉTODOS QUE FALTABAN (de HEAD) -----
+  Future<List<dynamic>> getMaterias() async {
+    final res =
+        await http.get(Uri.parse('$baseUrl/api/materias'), headers: _headers);
+    if (res.statusCode != 200) throw Exception('Error al obtener materias');
+    return jsonDecode(res.body) as List<dynamic>;
+  }
+
+  Future<Map<String, dynamic>> inscribirse(
+      int legajo, int idMateria, String tipoInstancia) async {
+    final res = await http.post(
+      Uri.parse('$baseUrl/api/inscripcion'),
+      headers: _headers,
+      body: jsonEncode({
+        'legajo': legajo,
+        'idMateria': idMateria,
+        'tipoInstancia': tipoInstancia
+      }),
+    );
+    final body = jsonDecode(res.body) as Map<String, dynamic>;
+    if (res.statusCode == 403) {
+      throw Exception('No cumple correlativas: ${body['faltantes']}');
+    }
+    if (res.statusCode != 201) throw Exception('Error al inscribirse');
+    return body;
   }
 }

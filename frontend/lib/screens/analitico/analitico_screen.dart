@@ -1,14 +1,4 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
-import 'package:provider/provider.dart';
-import '../../providers/auth_provider.dart';
-
-class AnaliticoScreen extends StatefulWidget { const AnaliticoScreen({super.key}); @override State<AnaliticoScreen> createState()=>_AnaliticoScreenState(); }
-class _AnaliticoScreenState extends State<AnaliticoScreen>{ late Future<Map<String,dynamic>> _data; String _estado='Todos';
- @override void initState(){super.initState();_data=_load();} Future<Map<String,dynamic>> _load() async=>await context.read<AuthProvider>().api.getJson('/alumnos/${context.read<AuthProvider>().alumno!.legajo}/analitico');
- @override Widget build(BuildContext c)=>Scaffold(appBar:AppBar(title:const Text('Mi Analítico')),body:FutureBuilder<Map<String,dynamic>>(future:_data,builder:(c,s){if(!s.hasData)return const Center(child:CircularProgressIndicator());final d=s.data!;final r=d['resumen'];final all=List<Map<String,dynamic>>.from(d['materias']);final ms=_estado=='Todos'?all:all.where((m)=>m['estado']==_estado).toList();return ListView(padding:const EdgeInsets.all(16),children:[Card(child:Padding(padding:const EdgeInsets.all(16),child:Row(mainAxisAlignment:MainAxisAlignment.spaceAround,children:[_metric('${r['avance']}%','Avance'),_metric('${r['aprobadas']}/${r['total']}','Aprobadas'),_metric('${r['promedio']??'-'}','Promedio')]))),DropdownButton<String>(value:_estado,isExpanded:true,items:['Todos','Aprobada','Regularizada','Libre','En curso','Pendiente'].map((x)=>DropdownMenuItem(value:x,child:Text('Estado: $x'))).toList(),onChanged:(x)=>setState(()=>_estado=x!)),...ms.map((m)=>Card(child:ListTile(title:Text(m['nombreMateria']),subtitle:Text('Año ${m['anioCarrera']} · ${m['estado']}\nNota: ${m['notaFinal']??'-'} · Acta: ${m['fechaAprobacion']??'-'} · T/F: ${m['tomo']??'-'}/${m['folio']??'-'}'),trailing:(m['desbloquea'] as List).isNotEmpty?const Icon(Icons.account_tree):null))) ]); }));
- Widget _metric(String n,String l)=>Column(children:[Text(n,style:const TextStyle(fontSize:23,fontWeight:FontWeight.bold)),Text(l)]);
-=======
 import '../../services/api_service.dart';
 import '../../models/alumno.dart';
 
@@ -87,14 +77,16 @@ class _AnaliticoScreenState extends State<AnaliticoScreen> {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              CircularProgressIndicator(value: porcentaje / 100.0, strokeWidth: 10),
+              CircularProgressIndicator(
+                  value: porcentaje / 100.0, strokeWidth: 10),
               Text('$porcentaje%'),
             ],
           ),
         ),
         const SizedBox(width: 16),
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('Materias aprobadas: $aprobadas / $total', style: const TextStyle(fontSize: 16)),
+          Text('Materias aprobadas: $aprobadas / $total',
+              style: const TextStyle(fontSize: 16)),
           const SizedBox(height: 8),
           Text('Promedio (mock): 8.2', style: const TextStyle(fontSize: 16)),
         ])
@@ -104,7 +96,8 @@ class _AnaliticoScreenState extends State<AnaliticoScreen> {
 
   Widget _buildFilters() {
     // Obtener lista de años disponibles
-    final materias = (_data!['materias'] as List<dynamic>).cast<Map<String, dynamic>>();
+    final materias =
+        (_data!['materias'] as List<dynamic>).cast<Map<String, dynamic>>();
     final anios = <int>{0};
     materias.forEach((m) => anios.add((m['anioCarrera'] as int)));
 
@@ -116,7 +109,10 @@ class _AnaliticoScreenState extends State<AnaliticoScreen> {
         const SizedBox(width: 8),
         DropdownButton<int>(
           value: _filterAnio,
-          items: items.map((a) => DropdownMenuItem(value: a, child: Text(a == 0 ? 'Todos' : 'Año $a'))).toList(),
+          items: items
+              .map((a) => DropdownMenuItem(
+                  value: a, child: Text(a == 0 ? 'Todos' : 'Año $a')))
+              .toList(),
           onChanged: (v) => setState(() => _filterAnio = v ?? 0),
         ),
       ],
@@ -124,8 +120,11 @@ class _AnaliticoScreenState extends State<AnaliticoScreen> {
   }
 
   Widget _buildTablaMaterias() {
-    final materias = (_data!['materias'] as List<dynamic>).cast<Map<String, dynamic>>();
-    final filtered = _filterAnio == 0 ? materias : materias.where((m) => m['anioCarrera'] == _filterAnio).toList();
+    final materias =
+        (_data!['materias'] as List<dynamic>).cast<Map<String, dynamic>>();
+    final filtered = _filterAnio == 0
+        ? materias
+        : materias.where((m) => m['anioCarrera'] == _filterAnio).toList();
 
     return SingleChildScrollView(
       child: DataTable(
@@ -142,8 +141,9 @@ class _AnaliticoScreenState extends State<AnaliticoScreen> {
               (m) => DataRow(cells: [
                 DataCell(Text(m['nombreMateria'] ?? '')),
                 DataCell(Text(m['estado'] ?? '')),
-                DataCell(Text((m['notaFinal'] ?? '-') .toString())),
-                DataCell(Text((m['fechaAprobacion'] ?? '').toString().split('T').first)),
+                DataCell(Text((m['notaFinal'] ?? '-').toString())),
+                DataCell(Text(
+                    (m['fechaAprobacion'] ?? '').toString().split('T').first)),
                 DataCell(Text('${m['tomo'] ?? '-'} / ${m['folio'] ?? '-'}')),
                 DataCell(Text(m['planEstudio'] ?? '-')),
               ]),
@@ -152,5 +152,4 @@ class _AnaliticoScreenState extends State<AnaliticoScreen> {
       ),
     );
   }
->>>>>>> 0e83a652029a0aaf2432beb1b372c07b6ea0bdbb
 }
