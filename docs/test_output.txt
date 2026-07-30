@@ -1,0 +1,44 @@
+PASS tests/inscripcion.integration.test.js
+  Integración: flujo de inscripción (RF01, RF03)
+    ✓ GET /health responde 200 (89 ms)
+    ✓ POST /api/auth/login con email válido devuelve token (35 ms)
+    ✓ POST /api/auth/login con email inválido devuelve 401 (4 ms)
+    ✓ GET /api/materias sin token devuelve 401 (3 ms)
+    ✓ GET /api/materias con token devuelve la lista de materias (7 ms)
+    ✓ POST /api/inscripcion cumpliendo correlativas devuelve 201 (6 ms)
+    ✓ POST /api/inscripcion sin cumplir correlativas devuelve 403 (5 ms)
+
+PASS tests/correlativaService.test.js
+  correlativaService.verificarCorrelatividad (RF03)
+    ✓ un alumno que aprobó las correlativas requeridas puede inscribirse (1 ms)
+    ✓ un alumno que NO aprobó las correlativas requeridas no puede inscribirse (1 ms)
+    ✓ una materia sin correlativas registradas siempre se puede cursar
+    ✓ un alumno inexistente sin historial no cumple correlativas de una materia que las requiere (1 ms)
+
+---------------------------|---------|----------|---------|---------|-------------------
+File                       | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+---------------------------|---------|----------|---------|---------|-------------------
+All files                  |   93.61 |     90.9 |   85.71 |   94.31 |                   
+ src                       |     100 |      100 |     100 |     100 |                   
+  app.js                   |     100 |      100 |     100 |     100 |                   
+ src/controllers           |   89.65 |     87.5 |      80 |   89.28 |                   
+  authController.js        |     100 |      100 |     100 |     100 |                   
+  inscripcionController.js |      80 |       75 |      50 |      80 | 11,28-29          
+  materiaController.js     |     100 |      100 |     100 |     100 |                   
+ src/db                    |     100 |      100 |     100 |     100 |                   
+  mockData.js              |     100 |      100 |     100 |     100 |                   
+ src/middleware            |    90.9 |      100 |     100 |    90.9 |                   
+  authMiddleware.js        |    90.9 |      100 |     100 |    90.9 | 15                
+ src/repositories          |    87.5 |       75 |      80 |   92.85 |                   
+  inscripcionRepository.js |      75 |      100 |      50 |   85.71 | 21                
+  materiaRepository.js     |     100 |       50 |     100 |     100 | 13                
+ src/routes                |     100 |      100 |     100 |     100 |                   
+  index.js                 |     100 |      100 |     100 |     100 |                   
+ src/services              |     100 |      100 |     100 |     100 |                   
+  correlativaService.js    |     100 |      100 |     100 |     100 |                   
+---------------------------|---------|----------|---------|---------|-------------------
+Test Suites: 2 passed, 2 total
+Tests:       11 passed, 11 total
+Snapshots:   0 total
+Time:        0.812 s, estimated 2 s
+Ran all test suites.
