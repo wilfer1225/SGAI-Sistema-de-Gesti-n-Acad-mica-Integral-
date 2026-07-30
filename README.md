@@ -19,7 +19,7 @@ sgai/
 │   │   ├── services/       # Lógica de negocio (ej. validación de correlativas)
 │   │   ├── middleware/     # Autenticación JWT
 │   │   ├── routes/         # Definición de endpoints
-│   │   └── db/             # Datos simulados (mock) para este alcance académico
+│   │   └── db/             # Pool y conexión PostgreSQL
 │   └── tests/         # Pruebas unitarias y de integración (Jest + Supertest)
 ├── frontend/          # App Flutter (Web & Mobile)
 │   └── lib/
@@ -49,12 +49,10 @@ flutter run -d chrome     # o -d <dispositivo> para mobile
 
 ## Base de datos
 
-El esquema real (PostgreSQL) está en `database/schema.sql`, con datos de ejemplo en
-`database/seed.sql`. El backend, en este alcance académico, usa datos simulados en memoria
-(`backend/src/db/mockData.js`) para no requerir una instancia de PostgreSQL corriendo durante
-el desarrollo y las pruebas — la migración a PostgreSQL real solo implica reemplazar las
-funciones de `src/repositories/` por consultas SQL, sin tocar controllers ni services
-(gracias al Repository Pattern).
+El backend utiliza PostgreSQL mediante consultas SQL parametrizadas en los repositories. El
+esquema está en `database/schema.sql` y los datos iniciales (incluido el historial académico
+para las correlatividades) en `database/seed.sql`. Consultá [la guía del backend](backend/README.md)
+para configurar `.env`, inicializar la base y ver ejemplos de la API.
 
 ## Metodología
 

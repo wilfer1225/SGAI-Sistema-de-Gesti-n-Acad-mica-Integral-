@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../services/api_service.dart';
-import '../../models/alumno.dart';
+import 'package:provider/provider.dart';
+import '../../providers/auth_provider.dart';
 import '../home/home_screen.dart';
 
 /// RF01: El sistema debe permitir el inicio de sesión del estudiante.
@@ -13,7 +13,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
-  final _api = ApiService(baseUrl: 'http://localhost:3000');
+  final _passwordController = TextEditingController();
   String? _error;
   bool _cargando = false;
 
@@ -23,13 +23,11 @@ class _LoginScreenState extends State<LoginScreen> {
       _cargando = true;
     });
     try {
-      final result = await _api.login(_emailController.text.trim());
-      _api.setToken(result['token'] as String);
-      final alumno = Alumno.fromJson(result['alumno'] as Map<String, dynamic>);
+      await context.read<AuthProvider>().login(_emailController.text.trim(), _passwordController.text);
 
       if (!mounted) return;
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => HomeScreen(api: _api, alumno: alumno)),
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
       );
     } catch (e) {
       setState(() => _error = 'No se pudo iniciar sesión. Verificá tus credenciales.');
@@ -54,6 +52,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextField(
                   controller: _emailController,
                   decoration: const InputDecoration(labelText: 'Email institucional'),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(labelText: 'Contraseña'),
+                  onSubmitted: (_) => _cargando ? null : _login(),
                 ),
                 const SizedBox(height: 16),
                 if (_error != null) Text(_error!, style: const TextStyle(color: Colors.red)),

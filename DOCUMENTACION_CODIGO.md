@@ -1,6 +1,8 @@
 # SGAI — Estructura y código fuente
 
-Este documento reúne la estructura funcional y el código fuente del proyecto **SGAI (Sistema de Gestión Académica Integral)**. El backend expone una API REST en Node.js/Express; el frontend es una aplicación Flutter que la consume. La persistencia se simula en memoria durante desarrollo, aunque se incluye el modelo PostgreSQL.
+Este documento reúne la estructura funcional y el código fuente del proyecto **SGAI (Sistema de Gestión Académica Integral)**. El backend expone una API REST en Node.js/Express; el frontend es una aplicación Flutter que la consume. La persistencia se realiza con PostgreSQL mediante repositories SQL parametrizados.
+
+> Actualización de arquitectura (julio de 2026): las secciones de extractos históricos que mencionan `mockData.js` corresponden a una versión anterior y no son parte del sistema vigente. La fuente de verdad es el código bajo `backend/src`; la configuración, los ejemplos de API y el procedimiento de despliegue están actualizados en [`backend/README.md`](backend/README.md).
 
 > No se incluyen directorios o archivos generados: `node_modules/`, `frontend/.dart_tool/`, `package-lock.json`, `pubspec.lock`, cachés y archivos de navegador. Se regeneran con `npm install` o `flutter pub get`.
 

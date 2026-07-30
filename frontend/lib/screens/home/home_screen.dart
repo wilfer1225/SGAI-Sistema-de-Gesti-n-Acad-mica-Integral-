@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../services/api_service.dart';
-import '../../models/alumno.dart';
+import 'package:provider/provider.dart';
+import '../../providers/auth_provider.dart';
 import '../analitico/analitico_screen.dart';
 import '../inscripcion/inscripcion_screen.dart';
 import '../asistencias/asistencias_screen.dart';
@@ -9,13 +9,12 @@ import '../asistencias/asistencias_screen.dart';
 /// (RF02, RF03/RF04, RF05). Recibe el ApiService ya autenticado (con el
 /// token seteado) y lo propaga a cada pantalla hija.
 class HomeScreen extends StatelessWidget {
-  final ApiService api;
-  final Alumno alumno;
-
-  const HomeScreen({super.key, required this.api, required this.alumno});
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
+    final alumno = auth.alumno!;
     return Scaffold(
       appBar: AppBar(title: Text('Hola, ${alumno.nombreCompleto}')),
       body: ListView(
@@ -26,7 +25,7 @@ class HomeScreen extends StatelessWidget {
             title: 'Mi Analítico',
             subtitle: 'Estado académico (RF02)',
             onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => AnaliticoScreen(api: api)),
+              MaterialPageRoute(builder: (_) => const AnaliticoScreen()),
             ),
           ),
           _MenuCard(
@@ -34,7 +33,7 @@ class HomeScreen extends StatelessWidget {
             title: 'Inscripción a Cursadas / Finales',
             subtitle: 'Valida correlatividades automáticamente (RF03/RF04)',
             onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => InscripcionScreen(api: api, alumno: alumno)),
+              MaterialPageRoute(builder: (_) => InscripcionScreen(api: auth.api, alumno: alumno)),
             ),
           ),
           _MenuCard(

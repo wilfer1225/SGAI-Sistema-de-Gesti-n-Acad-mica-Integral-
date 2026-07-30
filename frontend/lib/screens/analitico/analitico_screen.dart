@@ -1,17 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../services/api_service.dart';
+import 'package:provider/provider.dart';
+import '../../providers/auth_provider.dart';
 
-/// RF02: El sistema debe mostrar el estado académico (analítico) del alumno.
-/// Pantalla pendiente de desarrollo completo (Hito 3-4, ver planificación de Sprints).
-class AnaliticoScreen extends StatelessWidget {
-  final ApiService api;
-  const AnaliticoScreen({super.key, required this.api});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Mi Analítico')),
-      body: const Center(child: Text('Listado de materias aprobadas/pendientes (a implementar).')),
-    );
-  }
+class AnaliticoScreen extends StatefulWidget { const AnaliticoScreen({super.key}); @override State<AnaliticoScreen> createState()=>_AnaliticoScreenState(); }
+class _AnaliticoScreenState extends State<AnaliticoScreen>{ late Future<Map<String,dynamic>> _data; String _estado='Todos';
+ @override void initState(){super.initState();_data=_load();} Future<Map<String,dynamic>> _load() async=>await context.read<AuthProvider>().api.getJson('/alumnos/${context.read<AuthProvider>().alumno!.legajo}/analitico');
+ @override Widget build(BuildContext c)=>Scaffold(appBar:AppBar(title:const Text('Mi Analítico')),body:FutureBuilder<Map<String,dynamic>>(future:_data,builder:(c,s){if(!s.hasData)return const Center(child:CircularProgressIndicator());final d=s.data!;final r=d['resumen'];final all=List<Map<String,dynamic>>.from(d['materias']);final ms=_estado=='Todos'?all:all.where((m)=>m['estado']==_estado).toList();return ListView(padding:const EdgeInsets.all(16),children:[Card(child:Padding(padding:const EdgeInsets.all(16),child:Row(mainAxisAlignment:MainAxisAlignment.spaceAround,children:[_metric('${r['avance']}%','Avance'),_metric('${r['aprobadas']}/${r['total']}','Aprobadas'),_metric('${r['promedio']??'-'}','Promedio')]))),DropdownButton<String>(value:_estado,isExpanded:true,items:['Todos','Aprobada','Regularizada','Libre','En curso','Pendiente'].map((x)=>DropdownMenuItem(value:x,child:Text('Estado: $x'))).toList(),onChanged:(x)=>setState(()=>_estado=x!)),...ms.map((m)=>Card(child:ListTile(title:Text(m['nombreMateria']),subtitle:Text('Año ${m['anioCarrera']} · ${m['estado']}\nNota: ${m['notaFinal']??'-'} · Acta: ${m['fechaAprobacion']??'-'} · T/F: ${m['tomo']??'-'}/${m['folio']??'-'}'),trailing:(m['desbloquea'] as List).isNotEmpty?const Icon(Icons.account_tree):null))) ]); }));
+ Widget _metric(String n,String l)=>Column(children:[Text(n,style:const TextStyle(fontSize:23,fontWeight:FontWeight.bold)),Text(l)]);
 }

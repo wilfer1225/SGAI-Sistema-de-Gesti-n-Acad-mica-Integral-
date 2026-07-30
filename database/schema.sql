@@ -20,6 +20,14 @@ CREATE TABLE IF NOT EXISTS correlativa (
     PRIMARY KEY (id_materia_principal, id_materia_requerida)
 );
 
+-- Materias aprobadas: fuente de verdad para validar correlatividades.
+CREATE TABLE IF NOT EXISTS historial_academico (
+    legajo      INTEGER NOT NULL REFERENCES alumno(legajo),
+    id_materia  INTEGER NOT NULL REFERENCES materia(id_materia),
+    estado      VARCHAR(20) NOT NULL CHECK (estado IN ('Aprobada', 'Regularizada', 'Desaprobada')),
+    PRIMARY KEY (legajo, id_materia)
+);
+
 CREATE TABLE IF NOT EXISTS inscripcion (
     id_inscripcion     SERIAL PRIMARY KEY,
     legajo             INTEGER NOT NULL REFERENCES alumno(legajo),
@@ -32,3 +40,5 @@ CREATE TABLE IF NOT EXISTS inscripcion (
 
 CREATE INDEX IF NOT EXISTS idx_inscripcion_legajo ON inscripcion(legajo);
 CREATE INDEX IF NOT EXISTS idx_inscripcion_materia ON inscripcion(id_materia);
+
+-- Funcionalidades del portal: aplicar también database/migrate_portal.sql en bases existentes.
