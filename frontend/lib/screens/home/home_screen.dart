@@ -26,7 +26,7 @@ class HomeScreen extends StatelessWidget {
             title: 'Mi Analítico',
             subtitle: 'Estado académico (RF02)',
             onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => AnaliticoScreen(api: api)),
+              MaterialPageRoute(builder: (_) => AnaliticoScreen(api: api, alumno: alumno)),
             ),
           ),
           _MenuCard(
@@ -42,7 +42,7 @@ class HomeScreen extends StatelessWidget {
             title: 'Mis Asistencias',
             subtitle: 'Registro de asistencias/inasistencias (RF05)',
             onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const AsistenciasScreen()),
+              MaterialPageRoute(builder: (_) => AsistenciasScreen(api: api, alumno: alumno)),
             ),
           ),
         ],
