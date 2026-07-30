@@ -3,6 +3,8 @@ const { z } = require("zod");
 const { login, register } = require("../controllers/authController");
 const { listarMaterias } = require("../controllers/materiaController");
 const { crearInscripcion, listarInscripciones } = require("../controllers/inscripcionController");
+const { obtenerAnalitico } = require("../controllers/analiticoController");
+const { obtenerAsistencias } = require("../controllers/asistenciasController");
 const { requireAuth } = require("../middleware/authMiddleware");
 const { validate } = require("../middleware/validate");
 const portal = require("../controllers/portalController");
@@ -36,5 +38,9 @@ router.get("/oferta/mesas", requireAuth, portal.mesas);
 router.post("/inscripcion/cursada", requireAuth, validate(comisionSchema), portal.crearCursada);
 router.post("/inscripcion/final", requireAuth, validate(mesaSchema), portal.crearFinal);
 router.delete("/inscripcion/:id", requireAuth, validate(idSchema, "params"), portal.baja);
+
+// Nuevos endpoints para Analítico y Asistencias (mocked para UI)
+router.get("/analitico/:legajo", requireAuth, obtenerAnalitico);
+router.get("/asistencias/:legajo", requireAuth, obtenerAsistencias);
 
 module.exports = router;

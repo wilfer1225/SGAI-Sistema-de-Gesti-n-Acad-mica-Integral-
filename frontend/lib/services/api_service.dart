@@ -13,16 +13,25 @@ class ApiService {
 
   void setToken(String token) => _token = token;
 
-  Map<String, String> get _headers => {
-        'Content-Type': 'application/json',
-        if (_token != null) 'Authorization': 'Bearer $_token',
-      };
+  Map<String, String> get _headers {
+    final h = <String, String>{'Content-Type': 'application/json'};
+    if (_token != null) {
+      // construir dinámicamente para evitar interpolaciones literales
+      h['Authorization'] = 'Bearer ' + _token!;
+    }
+    return h;
+  }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     final res = await http.post(
       Uri.parse('$baseUrl/api/auth/login'),
+<<<<<<< HEAD
       headers: _headers,
       body: jsonEncode({'email': email, 'password': password}),
+=======
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email}),
+>>>>>>> 0e83a652029a0aaf2432beb1b372c07b6ea0bdbb
     );
     if (res.statusCode != 200) {
       throw Exception('Credenciales inválidas');
@@ -56,6 +65,7 @@ class ApiService {
     return body;
   }
 
+<<<<<<< HEAD
   Future<T> getJson<T>(String path) async {
     final response = await http.get(
       Uri.parse('$baseUrl/api$path'),
@@ -100,5 +110,17 @@ class ApiService {
     }
 
     return body;
+=======
+  Future<Map<String, dynamic>> getAnalitico(int legajo) async {
+    final res = await http.get(Uri.parse('$baseUrl/api/analitico/$legajo'), headers: _headers);
+    if (res.statusCode != 200) throw Exception('Error al obtener analítico');
+    return jsonDecode(res.body) as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> getAsistencias(int legajo) async {
+    final res = await http.get(Uri.parse('$baseUrl/api/asistencias/$legajo'), headers: _headers);
+    if (res.statusCode != 200) throw Exception('Error al obtener asistencias');
+    return jsonDecode(res.body) as Map<String, dynamic>;
+>>>>>>> 0e83a652029a0aaf2432beb1b372c07b6ea0bdbb
   }
 }
